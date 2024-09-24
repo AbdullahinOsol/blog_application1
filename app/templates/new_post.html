@@ -1,0 +1,70 @@
+{% extends "new_base.html" %}
+
+{% block content %}
+<article class="max-w-4xl mx-auto py-8">
+    <!-- Header Section -->
+    <header class="mb-8">
+        <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
+        <div class="flex items-center space-x-4 text-gray-600">
+            <a href="{{ url_for('main.user', username=post.author.username) }}" class="hover:underline">
+            <img class="h-12 w-12 rounded-full" src="{{ post.author.avatar(100) }}" alt="{{ post.author.username }}">
+            </a>
+            <div>
+                <a href="{{ url_for('main.user', username=post.author.username) }}" class="text-blue-500 hover:underline">
+                <p class="font-semibold">{{ post.author.username }}</p>
+                </a>
+                <p>Posted on: {{ moment(post.timestamp).format('LLL') }}</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Image Section -->
+    {% if post.image_url %}
+    <figure class="mb-8">
+        <div style="max-width: 100%; max-height: 600px; overflow: hidden; display: flex; justify-content: center;">
+            <img src="{{ post.image_url }}" alt="{{ post.title }}" style="width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        </div>
+    </figure>
+    {% endif %}
+
+    <!-- Content Section -->
+    <section class="prose max-w-none mb-8">
+        <p class="text-lg">{{ post.body | safe }}</p>
+    </section>
+
+    <!-- Edit/Delete Options (Only for the author) -->
+    {% if post.author == current_user %}
+    <div class="mb-8">
+        <a href="{{ url_for('main.edit_post', post_id=post.id) }}" class="text-blue-500 hover:text-blue-700 mr-4">Edit Post</a>
+        <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="post" class="inline">
+            {{ hiddenform.hidden_tag() }}
+            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete Post</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <hr class="my-8">
+
+    <!-- Comments Section -->
+    <section class="comments mb-8">
+        <h2 class="text-2xl font-semibold mb-6">Comments</h2>
+        {% for comment in comments %}
+            {% include '_comment.html' %}
+        {% endfor %}
+    </section>
+
+    <!-- Comment Form Section -->
+    {% if form %}
+    <section class="comment-form mt-6">
+        <form method="POST" action="{{ url_for('main.post_page', post_id=post.id) }}">
+            {{ form.hidden_tag() }}
+            <div class="mb-4">
+                <!-- {{ form.comment.label(class_='block text-gray-700 text-sm font-bold mb-2') }} -->
+                {{ form.comment(class_='border-black mt-1 block w-full border rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 pl-1', placeholder="Leave a comment...") }}
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit</button>
+        </form>
+    </section>
+    {% endif %}
+</article>
+{% endblock %}

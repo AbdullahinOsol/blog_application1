@@ -1,0 +1,22 @@
+{% extends 'new_base.html' %}
+
+{% block content %}
+<div class="container max-w-xl mx-auto">
+    <h1 class="text-3xl font-bold mb-16 text-center mt-12">Following of {{ user.username }}</h1>
+    <ul>
+        {% for follower in list %}
+            <li class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-teal-50 hover:bg-teal-100">
+                <a href="{{ url_for('main.user', username=follower.username) }}" class="flex items-center text-blue-500 hover:text-blue-700">
+                    <img src="{{ follower.avatar(100) }}" class="w-12 h-12 rounded-full border border-gray-300">
+                    <div class="ml-2">
+                        <span class="block text-2xl">{{ follower.username }}</span>
+                        {% if follower.about_me %}
+                            <span class="block text-sm text-gray-500">{{ follower.about_me[:30] }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

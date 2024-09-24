@@ -1,0 +1,16 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('main.user', username=comment.author.username) }}">
+                <img class="h-11 w-11 rounded-full" src="{{ comment.author.avatar(100) }}" />
+            </a>
+        </td>
+        <td>
+            <a href="{{ url_for('main.user', username=comment.author.username) }}" class="text-blue-500 hover:underline">
+                {{ comment.author.username }}</a> commented {{ moment(comment.timestamp).fromNow() }}:
+            <br>
+            {{ comment.body }}
+        </td>
+    </tr>
+</table>
+<br>

@@ -1,0 +1,43 @@
+{% extends "new_base.html" %}
+{% block content %}
+
+    <div class="text-center mb-6 mt-6">
+        <h2 class="text-3xl font-bold text-black">Search results for "{{ form.searched.data }}"</h2>
+    </div>
+    {% if posts %}
+        
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 gap-4" data-masonry="{'itemSelector': '.grid-item', 'columnWidth': '.grid-sizer', 'percentPosition': true}">
+                <div class="grid-sizer w-full md:w-1/2 lg:w-1/2"></div>
+                    {% for post in posts %}
+                        <div class="grid-item w-full md:w-1/2 lg:w-1/2">
+                            {% include '_post.html' %}
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Post navigation" class="mt-8 mb-8">
+            <ul class="pagination flex justify-center space-x-4">
+                <!-- Previous Button -->
+                <li class="page-item{% if not prev_url %} disabled{% endif %}">
+                    <a class="page-link py-2 px-4 rounded-lg {% if prev_url %}bg-blue-700 text-white hover:bg-blue-800{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
+                    href="{% if prev_url %}{{ prev_url }}{% else %}#{% endif %}">
+                        <span aria-hidden="true">&larr;</span> Newer posts
+                    </a>
+                </li>
+
+                <!-- Next Button -->
+                <li class="page-item{% if not next_url %} disabled{% endif %}">
+                    <a class="page-link py-2 px-4 rounded-lg {% if next_url %}bg-blue-700 text-white hover:bg-blue-800{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
+                    href="{% if next_url %}{{ next_url }}{% else %}#{% endif %}">
+                        Older posts <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% else %}
+      <h1>No results found.</h1>
+    {% endif %}
+{% endblock %}

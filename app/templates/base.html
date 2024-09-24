@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% if title %}
+    <title>{{ title }} - Microblog</title>
+    {% else %}
+    <title>Welcome to Microblog</title>
+    {% endif %}
+
+    <!-- Include Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900">
+    <nav class="bg-gray-100 shadow">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-6">
+                <a class="text-xl font-semibold text-gray-800" href="{{ url_for('main.index') }}">Microblog</a>
+                {% if title != 'Login' %}
+                <ul class="flex space-x-4">
+                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('main.index') }}">Home</a></li>
+                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('main.explore') }}">Explore</a></li>
+                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('main.add_blog') }}">Add Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- Right side with search, profile, logout -->
+            <div class="flex items-center space-x-4">
+                <!-- Search form -->
+                <form class="flex" method="POST" action="{{ url_for('main.search') }}" onsubmit="return validateSearch()">
+                    {{ form.hidden_tag() }}
+                    <input type="search" name="searched" class="border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none" placeholder="Search">
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-r-lg hover:bg-green-600">Search</button>
+                </form>
+
+                <!-- Profile dropdown -->
+                {% if not current_user.is_anonymous %}
+                <div class="relative">
+                    <button id="dropdownButton" class="flex items-center space-x-2 text-gray-800 hover:text-gray-600 focus:outline-none" onclick="toggleDropdown()">
+                        <img class="w-8 h-8 rounded-full" src="{{ current_user.avatar(50) }}" alt="User avatar">
+                        <span>{{ current_user.username }}</span>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <!-- Dropdown menu -->
+                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                        <ul class="py-1">
+                            <li><a href="{{ url_for('main.user', username=current_user.username) }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View Profile</a></li>
+                            <li><a href="{{ url_for('main.edit_profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Update Profile</a></li>
+                            <li><a href="{{ url_for('auth.logout') }}" onclick="return confirmDelete()" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+                {% else %}
+                <ul class="flex space-x-4">
+                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('auth.login') }}">Login</a></li>
+                </ul>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container mx-auto relative">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <!-- Toast container with absolute positioning -->
+          <div class="absolute top-4 right-4 space-y-3 z-50">
+            {% for category, message in messages %}
+            <!-- Assign a unique ID to each toast message -->
+            <div id="toast-{{ loop.index }}" class="max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700" role="alert" tabindex="-1" aria-labelledby="hs-toast-{{ category }}-example-label">
+              <div class="flex p-4">
+                <div class="shrink-0">
+                  <!-- Icon selection based on the category -->
+                  {% if category == 'success' %}
+                  <svg class="shrink-0 size-4 text-teal-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+                  </svg>
+                  {% elif category == 'error' %}
+                  <svg class="shrink-0 size-4 text-red-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+                  </svg>
+                  {% elif category == 'warning' %}
+                  <svg class="shrink-0 size-4 text-yellow-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
+                  </svg>
+                  {% else %}
+                  <svg class="shrink-0 size-4 text-blue-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"></path>
+                  </svg>
+                  {% endif %}
+                </div>
+                <div class="ms-3">
+                  <p id="hs-toast-{{ category }}-example-label" class="text-sm text-gray-700 dark:text-neutral-400">
+                    {{ message }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+      
+
+    <!-- Dropdown toggle script -->
+    <script>
+      function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('hidden');
+      }
+
+      window.onclick = function(event) {
+        if (!event.target.closest('#dropdownButton')) {
+          const dropdown = document.getElementById('profileDropdown');
+          if (!dropdown.classList.contains('hidden')) {
+            dropdown.classList.add('hidden');
+          }
+        }
+      }
+    </script>
+
+    <!-- Search validation script -->
+    <script>
+      function validateSearch() {
+        var searchInput = document.querySelector("input[name='searched']");
+        if (!searchInput.value.trim()) {
+          alert("Please enter a search term.");
+          return false; // Prevent form submission
+        }
+        return true;
+      }
+
+      // Disable search button if search input is empty
+      document.querySelector("input[name='searched']").addEventListener("input", function() {
+        var searchButton = document.querySelector("button[type='submit']");
+        if (this.value.trim() === "") {
+          searchButton.disabled = true;
+          searchButton.classList.add("opacity-50", "cursor-not-allowed");
+        } else {
+          searchButton.disabled = false;
+          searchButton.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+      });
+    </script>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var grid = document.querySelector('.grid');
+        if (grid) {
+          var msnry = new Masonry(grid, {
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-sizer',
+            percentPosition: true
+          });
+        }
+      });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          // Select all toasts
+          const toasts = document.querySelectorAll('[id^="toast-"]');
+          // Set a timeout to remove each toast after 5 seconds (5000 ms)
+          toasts.forEach((toast) => {
+            setTimeout(() => {
+              toast.remove();
+            }, 5000); // Adjust time if necessary
+          });
+        });
+    </script>
+    {{ moment.include_moment() }}
+    {{ ckeditor.load() }}
+</body>
+</html>

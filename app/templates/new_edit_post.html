@@ -1,0 +1,48 @@
+{% extends 'new_base.html' %}
+
+{% block content %}
+<div class="container mx-auto mt-8">
+    <!-- Form Card with Different Background Color -->
+    <div class="max-w-2xl mx-auto bg-teal-100 p-8 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-teal-800">Edit Blog</h2>
+        
+        <!-- Pre-fill form with blog post data -->
+        <form method="POST" action="{{ url_for('main.edit_post', post_id=post.id) }}" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+            <!-- Blog Title -->
+            <div class="mb-4">
+                {{ form.title.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.title(class_="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-500 focus:ring-opacity-50 h-9 pl-1", value=post.title) }}
+            </div>
+            
+            <!-- Blog Post Content -->
+            <div class="mb-4">
+                {{ form.post.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.post(class_="form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-500 focus:ring-opacity-50 h-36 pl-1") }}
+            </div>
+            
+            <!-- Image URL -->
+            <div class="mb-4">
+                {{ form.image_url.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.image_url(class_="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-500 focus:ring-opacity-50 pl-1", value=post.image_url) }}
+            </div>
+            
+            <!-- Upload Image File -->
+            <div class="mb-4">
+                {{ form.image_file.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                <div class="mt-1">
+                    {{ form.image_file(class_="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none") }}
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="mt-6 flex justify-center">
+                {{ form.submit(class_="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500", value="Update Blog") }}
+            </div>
+        </form>
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='post') }}
+    </div>
+</div>
+{% endblock %}

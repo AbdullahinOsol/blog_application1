@@ -1,0 +1,39 @@
+{% extends "new_base.html" %}
+
+{% block content %}
+<div class="container mx-auto mt-8">
+    <div class="max-w-4xl mx-auto bg-green-100 p-8 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-green-800">Edit Profile</h2>
+
+        <!-- Avatar Display -->
+        <div class="flex justify-center mb-6">
+            <img class="w-24 h-24 rounded-full shadow-md" src="{{ current_user.avatar(200) }}" alt="{{ current_user.username }}'s avatar">
+        </div>
+
+        <form method="POST" action="{{ url_for('main.edit_profile') }}">
+            {{ form.hidden_tag() }}
+
+            <!-- Username Field -->
+            <div class="mb-4">
+                {{ form.username.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.username(class_="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 h-9 pl-1") }}
+            
+                {% if form.username.errors %}
+                    <p class="text-red-500 text-sm mt-2">{{ form.username.errors[0] }}</p>
+                {% endif %}
+            </div>
+
+            <!-- About Me Field -->
+            <div class="mb-4">
+                {{ form.about_me.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                {{ form.about_me(class_="form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 h-36 pl-1") }}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="mt-6 flex justify-center">
+                {{ form.submit(class_="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

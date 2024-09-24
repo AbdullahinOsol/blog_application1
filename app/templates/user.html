@@ -1,0 +1,135 @@
+{% extends "new_base.html" %}
+
+{% block content %}
+    <div class="container mx-auto py-8">
+        <div class="flex flex-wrap md:flex-nowrap border-b border-gray-300 pb-8 pl-6">
+            <!-- User avatar -->
+            <div class="w-full md:w-1/4 mb-4 md:mb-0">
+                <img src="{{ user.avatar(200) }}" alt="User avatar" class="rounded-full w-64 h-64 object-cover">
+            </div>
+
+            <!-- User Info -->
+            <div class="md:ml-8 w-full">
+                <h1 class="text-3xl font-bold">{{ user.username }}</h1>
+
+                <!-- About Me Section -->
+                {% if user.about_me %}
+                    <p class="mt-2 text-gray-700">{{ user.about_me }}</p>
+                {% endif %}
+
+                <!-- Last Seen Section -->
+                {% if user.last_seen %}
+                    <p class="mt-2 text-gray-500">Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
+                {% endif %}
+
+                <!-- Followers & Following -->
+                <p class="mt-2">
+                    <a href="{{ url_for('main.followers_list', username=user.username) }}" class="text-blue-500 hover:underline">
+                        {{ user.followers_count() }} followers
+                    </a>, 
+                    <a href="{{ url_for('main.following_list', username=user.username) }}" class="text-blue-500 hover:underline">
+                        {{ user.following_count() }} following
+                    </a>
+                </p>
+
+                <!-- Profile Management Options -->
+                {% if user == current_user %}
+                    <div class="mt-4">
+                        <a href="{{ url_for('main.edit_profile') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Update profile</a>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" onclick="openDeleteModal()" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Delete Account</button>
+                    </div>
+                {% elif not current_user.is_following(user) %}
+                    <!-- Follow Button -->
+                    <div class="mt-4">
+                        <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <input type="submit" value="Follow" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                        </form>
+                    </div>
+                {% else %}
+                    <!-- Unfollow Button -->
+                    <div class="mt-4">
+                        <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <input type="submit" value="Unfollow" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Displaying Posts -->
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 gap-4" data-masonry="{'itemSelector': '.grid-item', 'columnWidth': '.grid-sizer', 'percentPosition': true}">
+                <div class="grid-sizer w-full md:w-1/2 lg:w-1/2"></div>
+                {% for post in posts %}
+                    <div class="grid-item w-full md:w-1/2 lg:w-1/2">
+                        {% include '_post.html' %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Post navigation" class="mt-8">
+            <ul class="pagination flex justify-center space-x-4">
+                <li class="page-item{% if not prev_url %} disabled{% endif %}">
+                    <a class="page-link py-2 px-4 rounded-lg {% if prev_url %}bg-blue-700 text-white hover:bg-blue-800{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
+                        href="{% if prev_url %}{{ prev_url }}{% else %}#{% endif %}">
+                        <span aria-hidden="true">&larr;</span> Newer posts
+                    </a>
+                </li>
+
+                <li class="page-item{% if not next_url %} disabled{% endif %}">
+                    <a class="page-link py-2 px-4 rounded-lg {% if next_url %}bg-blue-700 text-white hover:bg-blue-800{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
+                    href="{% if next_url %}{{ next_url }}{% else %}#{% endif %}">
+                        Older posts <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 hidden z-50 bg-gray-500 bg-opacity-75">
+      <div class="fixed inset-0 z-10 flex items-center justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+          <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Delete Account</h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">Are you sure you want to delete your account? This action cannot be undone.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <form action="{{ url_for('main.delete_user', username=user.username) }}" method="post">
+              {{ form.hidden_tag() }}
+              <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Delete</button>
+            </form>
+            <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto" onclick="closeDeleteModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Control Scripts -->
+    <script>
+        function openDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+    </script>
+{% endblock %}
