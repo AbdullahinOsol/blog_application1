@@ -1,0 +1,17 @@
+*.pyc
+__pycache__/
+
+.env
+
+node_modules/
+
+*.db
+
+# Ignore instance folder (commonly used in Flask applications)
+instance/
+
+# Ignore log files and directories
+logs/
+*.logs
+
+blogvenv/
