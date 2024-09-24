@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>Dear {{ post.author.username }},</p>
+        <p>
+            You have a new comment on your post titled "<strong>{{ post.title }}</strong>".
+            <a href="{{ url_for('main.post_page', post_id=post.id, _external=True) }}">Click here</a> to view the comment.
+        </p>
+        <p>Alternatively, you can paste the following link in your browser's address bar:</p>
+        <p>{{ url_for('main.post_page', post_id=post.id, _external=True) }}</p>
+        <p>If you did not expect this notification, simply ignore this message.</p>
+        <p>Regards,</p>
+        <p>The Microblog Team</p>
+    </body>
+</html>

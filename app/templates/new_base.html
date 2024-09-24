@@ -15,33 +15,38 @@
 
     <!-- Include Masonry CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-white text-gray-900">
-    <nav class="bg-gray-100 shadow">
+<body class="bg-[#CEEAF7] text-gray-900">
+    <nav class="bg-white shadow">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-6">
-                <a class="text-xl font-semibold text-gray-800" href="{{ url_for('main.index') }}">Osol Blogs</a>
+                <!-- Logo -->
+                 <a href="{{ url_for('main.index') }}">
+                 <img class="w-15 h-10" src="https://osoltech.com/hs-fs/hubfs/Medium%20size%20with%20Tag%20line.png?width=140&height=69&name=Medium%20size%20with%20Tag%20line.png" alt="Microblog">
+                 </a>
+                 <a class="text-xl font-semibold text-gray-800" href="{{ url_for('main.index') }}">Microblog</a>
                 {% if title != 'Login' %}
                 <ul class="flex space-x-4">
-                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('main.index') }}">Home</a></li>
-                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('main.explore') }}">Explore</a></li>
-                    <li><a class="text-gray-800 hover:text-gray-600" href="{{ url_for('main.add_blog') }}">Add Blog</a></li>
+                    <li><a class="text-lg text-gray-800 hover:text-gray-600" href="{{ url_for('main.explore') }}">Explore</a></li>
+                    <li><a class="text-lg text-gray-800 hover:text-gray-600" href="{{ url_for('main.add_blog') }}">Add Blog</a></li>
                 </ul>
             </div>
 
             <!-- Right side with search, profile, logout -->
             <div class="flex items-center space-x-4">
                 <!-- Search form -->
-                <form class="flex" method="POST" action="{{ url_for('main.search') }}" onsubmit="return validateSearch()">
+                <form class="relative flex" method="POST" action="{{ url_for('main.search') }}" onsubmit="return ValidateSearch()">
                     {{ form.hidden_tag() }}
-                    <input type="search" name="searched" class="border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none" placeholder="Search">
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-r-lg hover:bg-green-600">Search</button>
+                    <input type="search" name="searched" id="searched" class="border border-gray-300 rounded-lg pl-4 pr-10 py-2 focus:outline-none" placeholder="Search">
+                    <button type="submit" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"><i class="fas fa-search"></i></button>
                 </form>
 
                 <!-- Profile dropdown -->
                 {% if not current_user.is_anonymous %}
                 <div class="relative">
-                    <button id="dropdownButton" class="flex items-center space-x-2 text-gray-800 hover:text-gray-600 focus:outline-none" onclick="toggleDropdown()">
+                    <button id="dropdownButton" class="text-lg flex items-center space-x-2 text-gray-800 hover:text-gray-600 focus:outline-none" onclick="toggleDropdown()">
                         <img class="w-8 h-8 rounded-full" src="{{ current_user.avatar(50) }}" alt="User avatar">
                         <span>{{ current_user.username }}</span>
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -175,17 +180,30 @@
           percentPosition: true
         });
       }
-    </script><script>
-        document.addEventListener("DOMContentLoaded", function() {
-          // Select all toasts
-          const toasts = document.querySelectorAll('[id^="toast-"]');
-          // Set a timeout to remove each toast after 5 seconds (5000 ms)
-          toasts.forEach((toast) => {
-            setTimeout(() => {
-              toast.remove();
-            }, 5000); // Adjust time if necessary
-          });
+    
+      document.addEventListener("DOMContentLoaded", function() {
+        // Select all toasts
+        const toasts = document.querySelectorAll('[id^="toast-"]');
+        // Set a timeout to remove each toast after 5 seconds (5000 ms)
+        toasts.forEach((toast) => {
+          setTimeout(() => {
+            toast.remove();
+          }, 5000); // Adjust time if necessary
         });
+      });
+
+      function ValidateSearch() {
+        // Get the search input value
+        const searchInput = document.getElementById('searched').value.trim();
+        
+        // Check if the input is empty
+        if (searchInput === '') {
+          return false; // Prevent form submission
+        }
+        
+        return true; // Allow form submission if input is not empty
+      }
+
     </script>
     {{ moment.include_moment() }}
     {{ ckeditor.load() }}

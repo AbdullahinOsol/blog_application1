@@ -40,23 +40,18 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username = form.username.data, email = form.email.data)
-        usermail = form.email.data
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        try:
-            msg = Message('Hey', recipients = [usermail],body = "How are you?")
-            mail.send(msg)
-            print("Successful")
-        except:
-            with bp.app_context():
-                print("MAIL_SERVER:", bp.config.get('MAIL_SERVER'))
-                print("MAIL_port:", bp.config.get('MAIL_PORT'))
-                print("MAIL_username:", bp.config.get('MAIL_USERNAME'))
-                print("MAIL_password:", bp.config.get('MAIL_PASSWORD'))
-                print("MAIL_tls:", bp.config.get('MAIL_USE_TLS'))
-                print("MAIL_ssl:", bp.config.get('MAIL_USE_SSL'))
+
+        msg = Message(
+                '[Microblog] Welcome!',
+                recipients=[form.email.data],
+                html=render_template('email/signup_alert.html', user=user)
+        )
+        mail.send(msg)
+        print("Successful")
         return redirect(url_for('auth.login'))
     return render_template('auth/new_register.html', title='Register', form=form)
 

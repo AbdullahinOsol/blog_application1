@@ -29,7 +29,7 @@ def index():
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('index.html', title='Home', posts=posts.items, form=form, next_url=next_url, prev_url=prev_url)
+    return render_template('index.html', title='Following', posts=posts.items, form=form, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/user/<username>')
 @login_required
@@ -177,11 +177,10 @@ def post_page(post_id):
             db.session.add(comment)
             db.session.commit()
             flash('Your comment has been posted!', 'success')
-            post_url = url_for('main.post_page', post_id=post_id, _external=True)
             msg = Message(
-                'New Comment',
+                '[Microblog] New Comment!',
                 recipients=[post.author.email],
-                body=f"{form.comment.data}\nBy: {current_user.username}\n\nPost URL: {post_url}"
+                html=render_template('email/comment_alert.html', user=user, post=post)
             )
             mail.send(msg)
             print('successful')
@@ -253,6 +252,7 @@ def inject_search_form():
     return dict(form=SearchForm())
 
 @bp.route('/search', methods=['GET', 'POST'])
+@login_required
 def search():
     form = SearchForm()
     
@@ -275,6 +275,7 @@ def search():
     return render_template('search.html', title='Search Results', form=form, posts=posts.items, next_url=next_url, prev_url=prev_url, searched=searched)
 
 @bp.route('/add_blog', methods=['GET', 'POST'])
+@login_required
 def add_blog():
         form = PostForm()
         if form.validate_on_submit():

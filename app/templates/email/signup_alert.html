@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>Dear {{ user.username }},</p>
+        <p>
+            Welcome to <strong>Microblog!</strong> We're excited to have you join our community.
+        </p>
+        <p>
+            You can now log in and start sharing your thoughts with others. 
+            <a href="{{ url_for('main.index', _external=True) }}">Click here</a> to visit our website.
+        </p>
+        <p>Alternatively, you can paste the following link in your browser's address bar:</p>
+        <p>{{ url_for('main.index', _external=True) }}</p>
+        <p>
+            We hope you enjoy your experience. If you have any questions, feel free to reach out to us.
+        </p>
+        <p>Regards,</p>
+        <p>The Microblog Team</p>
+    </body>
+</html>

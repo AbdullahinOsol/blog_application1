@@ -1,38 +1,42 @@
 <section>
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-    <!-- Remove grid here and allow the article to take the full width -->
-    <article class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-      <div class="flex justify-between items-center mb-5 text-gray-500">
+    <!-- Cards with fixed min height to ensure consistency -->
+    <article class="p-6 bg-white rounded-lg border shadow-md dark:bg-white flex flex-col h-full min-h-[575px]"> <!-- min-h-[450px] added here for consistent card height -->
+      <div class="flex justify-between items-center mb-5 text-gray-900">
         <span></span>
         <span class="text-sm">{{ moment(post.timestamp).format('LL') }}</span>
       </div>
 
-      <!-- Blog Image -->
-      {% if post.image_url %}
+      <!-- Blog Image with fixed dimensions and cropping, placeholder if no image -->
       <div class="w-full mb-4">
-        <div class="overflow-hidden rounded-lg shadow-md">
-          <img src="{{ post.image_url }}" alt="{{ post.title }}" class="w-full h-auto object-cover">
+        <div class="overflow-hidden rounded-lg shadow-md h-64"> <!-- Fixed height -->
+          {% if post.image_url %}
+            <img src="{{ post.image_url }}" alt="{{ post.title }}" class="w-full h-full object-cover"> <!-- object-cover ensures cropping -->
+          {% else %}
+            <img src="https://via.placeholder.com/400x300?text=No+Image" alt="No Image" class="w-full h-full object-cover"> <!-- Placeholder image -->
+          {% endif %}
         </div>
       </div>
-      {% endif %}
 
       <!-- Blog Title -->
-      <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-black">
         <a href="{{ url_for('main.post_page', post_id=post.id) }}">{{ post.title }}</a>
       </h2>
 
       <!-- Blog Content (CKEditor-rendered content) -->
-      <div class="mb-5 font-light text-gray-500 dark:text-gray-400 ck-content">
+      <div class="mb-5 font-light text-gray-500 dark:text-gray-900 ck-content flex-grow">
         {{ post.body[:200] | safe }}{% if post.body|length > 200 %}...{% endif %}
       </div>
 
       <!-- Post Metadata -->
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center mt-auto"> <!-- Ensure footer sticks to the bottom -->
         <div class="flex items-center space-x-4">
           <img class="w-7 h-7 rounded-full" src="{{ post.author.avatar(100) }}" alt="Author avatar" />
-          <span class="font-medium dark:text-white">{{ post.author.username }}</span>
+          <a href="{{ url_for('main.user', username=post.author.username) }}">
+            <span class="font-medium dark:text-[#225993] hover:underline">{{ post.author.username }}</span>
+          </a>
         </div>
-        <a href="{{ url_for('main.post_page', post_id=post.id) }}" class="inline-flex items-center font-medium text-blue-400 dark:text-blue-300 hover:underline">
+        <a href="{{ url_for('main.post_page', post_id=post.id) }}" class="inline-flex items-center font-medium text-[#225993] dark:text-[#225993] hover:underline">
           Read more
           <svg class="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
