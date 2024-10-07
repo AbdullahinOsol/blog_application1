@@ -11,13 +11,19 @@
             
             <!-- Blog Title -->
             <div class="mb-4">
-                {{ form.title.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                <div class="flex items-center">
+                    {{ form.title.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                    <span class="text-red-500 relative -top-1 ml-1">*</span> <!-- Adjusting position of the asterisk -->
+                </div>
                 {{ form.title(class_="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 h-9 pl-1", style="border: 1px solid #000000;") }}
             </div>
             
             <!-- Blog Post Content -->
             <div class="mb-4">
-                {{ form.post.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                <div class="flex items-center">
+                    {{ form.post.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                    <span class="text-red-500 relative -top-1 ml-1">*</span> <!-- Adjusting position of the asterisk -->
+                </div>
                 {{ form.post(class_="form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 h-36 pl-1") }}
             </div>
             

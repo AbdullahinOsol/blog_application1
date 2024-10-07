@@ -11,25 +11,31 @@
             {{ form.hidden_tag() }}
 
             <!-- Blog Title -->
-            <div class="mb-4 mx-16">
-                {{ form.title.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+            <div class="mb-4 min-md:mx-16">
+                <div class="flex items-center">
+                    {{ form.title.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                    <span class="text-red-500 relative -top-1 ml-1">*</span> <!-- Asterisk for required field -->
+                </div>
                 {{ form.title(class_="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-500 focus:ring-opacity-50 h-9 px-1 py-1", value=post.title, style="border: 1px solid #000000;") }}
             </div>
             
             <!-- Blog Post Content -->
-            <div class="mb-4 mx-16">
-                {{ form.post.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+            <div class="mb-4 min-md:mx-16">
+                <div class="flex items-center">
+                    {{ form.post.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
+                    <span class="text-red-500 relative -top-1 ml-1">*</span> <!-- Asterisk for required field -->
+                </div>
                 {{ form.post(class_="form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-500 focus:ring-opacity-50 h-36 pl-1") }}
             </div>
             
             <!-- Image URL -->
-            <div class="mb-4 mx-16">
+            <div class="mb-4 min-md:mx-16">
                 {{ form.image_url.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
                 {{ form.image_url(class_="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-500 focus:ring-opacity-50 h-9 px-1 py-1", value=post.image_url, style="border: 1px solid #000000;") }}
             </div>
             
             <!-- Upload Image File -->
-            <div class="mb-4 mx-16">
+            <div class="mb-4 min-md:mx-16">
                 {{ form.image_file.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
                 <div class="mt-1">
                     {{ form.image_file(class_="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none h-9 px-1 py-1", style="border: 1px solid #000000;") }}
@@ -37,7 +43,7 @@
             </div>
             
             <!-- Submit Button -->
-            <div class="mt-6 flex justify-end mx-16">
+            <div class="mt-6 flex justify-end min-md:mx-16">
                 {{ form.submit(class_="bg-[#225993] text-white px-4 py-2 rounded hover:bg-[#1B487A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500", value="Update Blog") }}
             </div>
         </form>

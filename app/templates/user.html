@@ -2,10 +2,10 @@
 
 {% block content %}
     <div class="container mx-auto py-8 bg-[#CEEAF7]">
-        <div class="flex flex-wrap md:flex-nowrap border-b border-gray-300 pb-8 pl-6">
+        <div class="flex flex-wrap md:flex-nowrap border-b border-gray-300 pb-8 px-6">
             <!-- User avatar -->
-            <div class="w-full md:w-1/4 mb-4 md:mb-0">
-                <img src="{{ user.avatar(200) }}" alt="User avatar" class="rounded-full w-64 h-64 object-cover">
+            <div class="w-full sm:w-1/2 md:w-1/4 mb-4 md:mb-0">
+                <img src="{{ user.avatar(200) }}" alt="User avatar" class="rounded-full w-32 sm:w-48 md:w-64 h-auto object-cover">
             </div>
 
             <!-- User Info -->
@@ -31,11 +31,12 @@
                         {{ user.following_count() }} following
                     </a>
                 </p>
-
+                
+                {% if not current_user.is_anonymous %}
                 <!-- Profile Management Options -->
                 {% if user == current_user %}
                     <div class="mt-4">
-                        <a href="{{ url_for('main.edit_profile') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Update profile</a>
+                        <a href="{{ url_for('main.edit_profile') }}" class="inline-block bg-[#225993] hover:bg-[#1B487A] text-white px-4 py-2 rounded-md">Update profile</a>
                     </div>
                     <div class="mt-4">
                         <button type="button" onclick="openDeleteModal()" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Delete Account</button>
@@ -45,7 +46,7 @@
                     <div class="mt-4">
                         <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            <input type="submit" value="Follow" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                            <input type="submit" value="Follow" class="bg-[#225993] text-white px-4 py-2 rounded-md hover:bg-[#1B487A]">
                         </form>
                     </div>
                 {% else %}
@@ -53,8 +54,13 @@
                     <div class="mt-4">
                         <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            <input type="submit" value="Unfollow" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                            <input type="submit" value="Unfollow" class="bg-[#225993] text-white px-4 py-2 rounded-md hover:bg-[#1B487A]">
                         </form>
+                    </div>
+                {% endif %}
+                {% else %}
+                    <div class="mt-4">
+                        <a href="{{ url_for('auth.login') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Sign In to follow</a>
                     </div>
                 {% endif %}
             </div>
@@ -63,9 +69,9 @@
         <!-- Displaying Posts -->
         <div class="container mx-auto">
             <div class="grid grid-cols-1 gap-4" data-masonry="{'itemSelector': '.grid-item', 'columnWidth': '.grid-sizer', 'percentPosition': true}">
-                <div class="grid-sizer w-full md:w-1/2 lg:w-1/2"></div>
+                <div class="grid-sizer w-full md:w-1/2 lg:w-1/3"></div>
                 {% for post in posts %}
-                    <div class="grid-item w-full md:w-1/2 lg:w-1/2">
+                    <div class="grid-item w-full md:w-1/2 lg:w-1/3">
                         {% include '_post.html' %}
                     </div>
                 {% endfor %}
@@ -75,19 +81,23 @@
         <!-- Pagination -->
         <nav aria-label="Post navigation" class="mt-8">
             <ul class="pagination flex justify-center space-x-4">
+                {% if prev_url %}
                 <li class="page-item{% if not prev_url %} disabled{% endif %}">
-                    <a class="page-link py-2 px-4 rounded-lg {% if prev_url %}bg-blue-700 text-white hover:bg-blue-800{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
+                    <a class="page-link py-2 px-4 rounded-lg {% if prev_url %}bg-[#225993] text-white hover:bg-[#1B487A]{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
                         href="{% if prev_url %}{{ prev_url }}{% else %}#{% endif %}">
                         <span aria-hidden="true">&larr;</span> Newer posts
                     </a>
                 </li>
+                {% endif %}
 
+                {% if next_url %}
                 <li class="page-item{% if not next_url %} disabled{% endif %}">
-                    <a class="page-link py-2 px-4 rounded-lg {% if next_url %}bg-blue-700 text-white hover:bg-blue-800{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
+                    <a class="page-link py-2 px-4 rounded-lg {% if next_url %}bg-[#225993] text-white hover:bg-[#1B487A]{% else %}bg-gray-300 text-gray-500 cursor-not-allowed{% endif %}"
                     href="{% if next_url %}{{ next_url }}{% else %}#{% endif %}">
                         Older posts <span aria-hidden="true">&rarr;</span>
                     </a>
                 </li>
+                {% endif %}
             </ul>
         </nav>
     </div>

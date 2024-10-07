@@ -16,4 +16,4 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     ADMINS = [os.environ.get('ADMINS')]  # or explicitly set the admins
-    POSTS_PER_PAGE = 7
+    POSTS_PER_PAGE = 6

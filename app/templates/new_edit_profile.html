@@ -1,36 +1,36 @@
 {% extends "new_base.html" %}
 
 {% block content %}
-<div class="container mx-auto mt-8 bg-[#CEEAF7]">
-    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+<div class="flex min-h-full flex-col justify-center px-4 py-6 sm:px-6 lg:px-8 sm:py-12">
+    <!-- Outer card with background and shadow -->
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-xl mx-auto">
         <h2 class="text-2xl font-bold mb-6 text-center text-[#3C75B1]">Edit Profile</h2>
 
         <!-- Avatar Display -->
         <div class="flex justify-center mb-6">
-            <img class="w-24 h-24 rounded-full shadow-md" src="{{ current_user.avatar(200) }}" alt="{{ current_user.username }}'s avatar">
+            <img class="w-24 h-auto rounded-full shadow-md" src="{{ current_user.avatar(200) }}" alt="{{ current_user.username }}'s avatar">
         </div>
 
         <form method="POST" action="{{ url_for('main.edit_profile') }}">
             {{ form.hidden_tag() }}
 
             <!-- Username Field -->
-            <div class="mb-4 mx-16">
+            <div class="mb-4">
                 {{ form.username.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
                 {{ form.username(class_="form-input mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 h-9 pl-1", style="border: 1px solid #000000;") }}
-            
                 {% if form.username.errors %}
                     <p class="text-red-500 text-sm mt-2">{{ form.username.errors[0] }}</p>
                 {% endif %}
             </div>
 
             <!-- About Me Field -->
-            <div class="mb-4 mx-16">
+            <div class="mb-4">
                 {{ form.about_me.label(class_="block text-gray-700 text-sm font-bold mb-2") }}
                 {{ form.about_me(class_="form-textarea mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 h-36 pl-1", style="border: 1px solid #000000;") }}
             </div>
 
             <!-- Submit Button -->
-            <div class="mt-6 flex justify-end mx-16">
+            <div class="mt-6 flex justify-end">
                 {{ form.submit(class_="bg-[#225993] text-white px-4 py-2 rounded hover:bg-[#1B487A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500") }}
             </div>
         </form>

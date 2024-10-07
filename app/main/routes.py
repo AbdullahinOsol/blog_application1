@@ -9,30 +9,21 @@ from app.main import bp
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 import os
-import bleach
 from sqlalchemy import or_
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.post.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash('Your post is now live!', 'success')
-        return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     posts = db.paginate(current_user.following_posts(), page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
     next_url = url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('index.html', title='Following', posts=posts.items, form=form, next_url=next_url, prev_url=prev_url)
+    return render_template('index.html', title='Following', posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/user/<username>')
-@login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
     page = request.args.get('page', 1, type=int)
@@ -130,7 +121,7 @@ def follow(username):
         current_user.follow(user)
         db.session.commit()
         flash(f'You are following {username}!', 'success')
-        return redirect(url_for('main.user', username=username))
+        return redirect(request.referrer or url_for('main.user', username=username))
     else:
         return redirect(url_for('main.index'))
     
@@ -150,12 +141,11 @@ def unfollow(username):
         current_user.unfollow(user)
         db.session.commit()
         flash(f'You have unfollowed {username}.', 'success')
-        return redirect(url_for('main.user', username=username))
+        return redirect(request.referrer or url_for('main.user', username=username))
     else:
         return redirect(url_for('main.index'))
     
 @bp.route('/explore')
-@login_required
 def explore():
     page = request.args.get('page', 1, type=int)
     query = sa.select(Post).order_by(Post.timestamp.desc())
@@ -180,7 +170,9 @@ def post_page(post_id):
             msg = Message(
                 '[Microblog] New Comment!',
                 recipients=[post.author.email],
-                html=render_template('email/comment_alert.html', user=user, post=post)
+                html=render_template('email/comment_alert.html', user=user, post=post),
+                sender=('Microblog Notifications'),
+                reply_to='no-reply@microblog.com'
             )
             mail.send(msg)
             print('successful')
@@ -244,15 +236,15 @@ def followers_list(username):
 def following_list(username):
     user = db.session.scalar(sa.select(User).where(User.username == username))
     list = user.get_following_users()
+    form = EmptyForm()
 
-    return render_template('following.html', user=user, list=list)
+    return render_template('following.html', user=user, list=list, form = form)
 
 @bp.context_processor
 def inject_search_form():
     return dict(form=SearchForm())
 
 @bp.route('/search', methods=['GET', 'POST'])
-@login_required
 def search():
     form = SearchForm()
     
@@ -305,7 +297,3 @@ def add_blog():
             return redirect(url_for('main.index'))
         
         return render_template('add_blog.html', title='Add Blog', form=form)
-
-# @bp.template_filter('truncate_html')
-# def truncate_html(content, length=200):
-#     return bleach.clean(content, tags=[], strip=True)[:length]

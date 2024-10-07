@@ -10,6 +10,10 @@ def validate_alphanumeric(form, field):
     password = field.data
     if not re.match("^[a-zA-Z0-9]*$", password):
         raise ValidationError('Password must be alphanumeric (letters and numbers only).')
+    
+def validate_no_space(form, field):
+    if ' ' in field.data:
+        raise ValidationError('Username cannot contain spaces.')
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -19,7 +23,7 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired(), validate_no_space])
     email = StringField('Email', validators=[DataRequired(), Email()])
     about_me = TextAreaField('About me')
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8), validate_alphanumeric])
@@ -41,6 +45,6 @@ class ResetPasswordRequestForm(FlaskForm):
     submit = SubmitField('Request Password Reset')
     
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8), validate_alphanumeric])
     password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField('Reset Password')

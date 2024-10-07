@@ -1,22 +1,44 @@
 {% extends 'new_base.html' %}
 
 {% block content %}
-<div class="container max-w-xl mx-auto">
-    <h1 class="text-3xl font-bold mb-16 text-center mt-12">Followers of {{ user.username }}</h1>
-    <ul>
-        {% for follower in list %}
-            <li class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-teal-50 hover:bg-teal-100">
+<div class="flex min-h-full flex-col justify-center px-4 py-6 sm:px-6 lg:px-8 sm:py-12">
+    <!-- Outer card with background and shadow -->
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center text-[#3C75B1]">Followers of {{ user.username }}</h1>
+        <ul>
+            {% for follower in list %}
+            <li class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-blue-100 mb-4">
                 <a href="{{ url_for('main.user', username=follower.username) }}" class="flex items-center text-blue-500 hover:text-blue-700">
                     <img src="{{ follower.avatar(100) }}" class="w-12 h-12 rounded-full border border-gray-300">
-                    <div class="ml-2">
+                    <div class="ml-4">
                         <span class="block text-2xl">{{ follower.username }}</span>
                         {% if follower.about_me %}
-                            <span class="block text-sm text-gray-500">{{ follower.about_me[:30] }}</span>
+                        <span class="block text-sm text-gray-500">{{ follower.about_me[:30] }}</span>
                         {% endif %}
                     </div>
                 </a>
+
+                <!-- Follow/Unfollow Button - Stuck to the right side -->
+                <div>
+                    {% if current_user.is_following(follower) %}
+                    <div>
+                        <form action="{{ url_for('main.unfollow', username=follower.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <input type="submit" value="Unfollow" class="bg-[#225993] text-white px-4 py-2 rounded-md hover:bg-[#1B487A]">
+                        </form>
+                    </div>
+                    {% else %}
+                    <div>
+                        <form action="{{ url_for('main.follow', username=follower.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <input type="submit" value="Follow" class="bg-[#225993] text-white px-4 py-2 rounded-md hover:bg-[#1B487A]">
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
             </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

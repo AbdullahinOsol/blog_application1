@@ -1,28 +1,20 @@
+{% extends 'new_base.html' %}
+
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#CEEAF7]">
+<html lang="en" class="bg-[#CEEAF7] h-full">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- For FontAwesome icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      function togglePassword(id) {
-        var field = document.getElementById(id);
-        if (field.type === "password") {
-          field.type = "text";
-        } else {
-          field.type = "password";
-        }
-      }
-    </script>
-
   </head>
   <body class="h-full">
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <!-- Outer Card Container -->
-      <div class="mx-72 bg-white shadow-md rounded-lg p-8">
+    {% block content %}
+    <div class="flex min-h-full flex-col justify-center px-4 py-6 sm:px-6 lg:px-8 sm:py-12">
+      <!-- Outer card with different background color -->
+      <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-xl mx-auto">
         <!-- Logo and Title -->
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
           <img class="mx-auto h-15 w-auto" src="https://osoltech.com/hs-fs/hubfs/Medium%20size%20with%20Tag%20line.png?width=140&amp;height=69&amp;name=Medium%20size%20with%20Tag%20line.png" alt="Your Company">
@@ -30,8 +22,8 @@
         </div>
 
         <!-- Form Container -->
-        <div class="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form class="space-y-6" action="{{ url_for('auth.register') }}" method="POST">
+        <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form class="space-y-4" action="{{ url_for('auth.register') }}" method="POST">
             {{ form.hidden_tag() }}
 
             <!-- Username Field -->
@@ -95,13 +87,9 @@
                 </span>
               </div>
               <!-- Error Message -->
-              <div class="relative h-6">
-                {% if form.password.errors %}
-                  <p class=" text-sm text-red-600 absolute">{{ form.password.errors[0] }}</p>
-                {% else %}
-                  <p class=" text-sm invisible">Error placeholder</p>
-                {% endif %}
-              </div>
+              {% if form.password.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.password.errors[0] }}</p>
+              {% endif %}
             </div>
 
             <!-- Confirm Password Field -->
@@ -119,28 +107,41 @@
                 </span>
               </div>
               <!-- Error Message -->
-              <div class="relative h-6">
-                {% if form.confirm_password.errors %}
-                  <p class="mt-1 text-sm text-red-600 absolute">{{ form.confirm_password.errors[0] }}</p>
-                {% else %}
-                  <p class="mt-1 text-sm invisible">Error placeholder</p>
-                {% endif %}
-              </div>
+              {% if form.confirm_password.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.confirm_password.errors[0] }}</p>
+              {% endif %}
             </div>
 
             <!-- Submit Button -->
-            <div class="mt-1">
-              <button type="submit" class="flex w-full justify-center rounded-md bg-[#225993] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#1B487A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign Up</button>
+            <div>
+              <button type="submit" class="mt-6 flex w-full justify-center rounded-md bg-[#225993] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#1B487A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign Up</button>
             </div>
           </form>
 
           <!-- Link to Sign In -->
-          <p class="mt-1 text-center text-sm text-gray-400">
+          <p class="mt-2 text-center text-sm text-gray-400">
             Already have an account?
             <a href="{{ url_for('auth.login') }}" class="font-semibold leading-6 text-blue-400 hover:text-blue-300">Sign In</a>
           </p>
         </div>
       </div>
     </div>
+
+    <script>
+      function togglePassword(id) {
+        var field = document.getElementById(id);
+        var icon = field.nextElementSibling.querySelector("i");
+        if (field.type === "password") {
+          field.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          field.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+    </script>
+    {% endblock %}
   </body>
 </html>

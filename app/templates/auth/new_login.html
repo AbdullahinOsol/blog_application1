@@ -1,5 +1,7 @@
+{% extends 'new_base.html' %}
+
 <!DOCTYPE html>
-<html lang="en" class="bg-[#CEEAF7] h-full "> <!-- Background color for the entire page -->
+<html lang="en" class="bg-[#CEEAF7] h-full">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +19,7 @@
         <div class="absolute top-4 right-4 space-y-3 z-50">
           {% for category, message in messages %}
           <!-- Assign a unique ID to each toast message -->
-          <div id="toast-{{ loop.index }}" class="max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700" role="alert" tabindex="-1" aria-labelledby="hs-toast-{{ category }}-example-label">
+          <div id="toast-{{ loop.index }}" class="bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700" role="alert" tabindex="-1" aria-labelledby="hs-toast-{{ category }}-example-label">
             <div class="flex p-4">
               <div class="shrink-0">
                 <!-- Icon selection based on the category -->
@@ -40,7 +42,7 @@
                 {% endif %}
               </div>
               <div class="ms-3">
-                <p id="hs-toast-{{ category }}-example-label" class="text-sm text-gray-700 dark:text-neutral-400">
+                <p id="hs-toast-{{ category }}-example-label" class="text-sm text-gray-700 dark:text-neutral-400 whitespace-nowrap">
                   {{ message }}
                 </p>
               </div>
@@ -50,21 +52,21 @@
         </div>
       {% endif %}
       {% endwith %}
-      {% block content %}{% endblock %}
+      {% block content %}
     </div>
 
     <!-- Card Container -->
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="flex min-h-full flex-col justify-center px-4 py-6 sm:px-6 lg:px-8 sm:py-12">
       <!-- Outer card with different background color -->
-      <div class="bg-white shadow-md rounded-lg p-8 w-lg mx-72">
+      <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-xl mx-auto">
         <!-- Inner content (logo and form) -->
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img class="mx-auto h-20 w-auto" src="https://osoltech.com/hs-fs/hubfs/Medium%20size%20with%20Tag%20line.png?width=140&height=69&name=Medium%20size%20with%20Tag%20line.png" alt="Your Company">
+          <img class="mx-auto h-10 sm:h-20 w-auto" src="https://osoltech.com/hs-fs/hubfs/Medium%20size%20with%20Tag%20line.png?width=140&height=69&name=Medium%20size%20with%20Tag%20line.png" alt="Your Company">
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-black">Sign in to your account</h2>
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form class="space-y-6" action="{{ url_for('auth.login') }}" method="POST">
+          <form action="{{ url_for('auth.login') }}" method="POST">
             {{ form.hidden_tag() }}
             <div>
               <label for="username" class="block text-sm font-medium leading-6 text-gray-700">Username <span class="text-red-500">*</span></label>
@@ -73,7 +75,8 @@
                   class_="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-2",
                   placeholder="JohnDoe",
                   onfocus="this.setAttribute('placeholder', '')",
-                  onblur="this.setAttribute('placeholder', 'JohnDoe')"
+                  onblur="this.setAttribute('placeholder', 'JohnDoe')",
+                  autocomplete="off",
                 ) }}
                 {% if form.username.errors %}
                   <p class="mt-2 text-sm text-red-600">{{ form.username.errors[0] }}</p>
@@ -82,7 +85,7 @@
             </div>
 
             <div>
-              <div class="flex items-center justify-between">
+              <div class="mt-6 flex items-center justify-between">
                 <label for="password" class="block text-sm font-medium leading-6 text-gray-700">Password <span class="text-red-500">*</span></label>
               </div>
               <div class="mt-2 relative">
@@ -100,18 +103,16 @@
               <div>
                 {% if form.password.errors %}
                   <p class="mt-1 text-sm text-red-600 absolute">{{ form.password.errors[0] }}</p>
-                {% else %}
-                  <p class="mt-1 text-sm invisible">Error placeholder</p>
                 {% endif %}
               </div>
             </div>
 
-            <div class="flex items-center justify-between text-sm">
+            <div class="flex items-center justify-between text-sm pt-1">
               <a href="{{ url_for('auth.reset_password_request') }}" class="ml-auto font-semibold text-blue-400 hover:text-blue-300">Forgot password?</a>
             </div>
 
             <div>
-              <button type="submit" class="flex w-full justify-center rounded-md bg-[#225993] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#1B487A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign In</button>
+              <button type="submit" class="mt-6 flex w-full justify-center rounded-md bg-[#225993] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#1B487A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign In</button>
             </div>
           </form>
 
@@ -139,13 +140,19 @@
     <script>
       function togglePassword(id) {
         var field = document.getElementById(id);
+        var icon = field.nextElementSibling.querySelector("i");
         if (field.type === "password") {
           field.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
         } else {
           field.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
         }
       }
     </script>
 
   </body>
 </html>
+{% endblock %}
