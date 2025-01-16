@@ -10,4 +10,5 @@ instance/
 logs/
 *.logs
 
-blogvenv/
+blogvenv2/
+.env
