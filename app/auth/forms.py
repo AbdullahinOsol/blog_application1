@@ -8,8 +8,12 @@ import re
 
 def validate_alphanumeric(form, field):
     password = field.data
+    # Check if the password contains only alphanumeric characters
     if not re.match("^[a-zA-Z0-9]*$", password):
         raise ValidationError('Password must be alphanumeric (letters and numbers only).')
+    # Check if the password contains at least one letter and one number
+    if not re.search("[a-zA-Z]", password) or not re.search("[0-9]", password):
+        raise ValidationError('Password must contain both letters and numbers.')
     
 def validate_no_space(form, field):
     if ' ' in field.data:
